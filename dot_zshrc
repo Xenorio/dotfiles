@@ -1,0 +1,68 @@
+export MANPATH="/usr/local/man:$MANPATH"
+export LANG=en_US.UTF-8
+export EDITOR=vim
+
+loadPlugin() {
+    source /home/xenorio/.config/zsh/plugins/$1/$1.zsh 2>/dev/null
+}
+
+loadPlugin "zsh-autosuggestions"
+
+autoload -U colors && colors
+PS1="%F{#800080}[%B%F{#DA70D6}%n%f%F{#800080}%b] %B%~%b%f "
+
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.cache/zsh/history
+setopt inc_append_history
+PROMPT_COMMAND='history -a'
+if [ -f "$HISTFILE" ]; then
+  fc -p "$HISTFILE"
+fi
+
+autoload -U compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
+compinit
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+_comp_options+=(globdots)	
+
+bindkey -s "^[c" "c\n" # alt+c = clear
+bindkey '^[[1;5C' 'forward-word' # ctrl+=>
+
+[ -f "$HOME/.config/aliasrc" ] && source "$HOME/.config/aliasrc"
+
+loadPlugin "zsh-syntax-highlighting"
+
+# NVM
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export PATH=/home/xenorio/bin:$PATH
+export PATH=/root/.local/share/gem/ruby/3.0.0/bin:$PATH #Ruby gems
+export SHELL=/usr/bin/zsh
+
+# pnpm
+export PNPM_HOME="/home/xenorio/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/xenorio/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/xenorio/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/xenorio/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/xenorio/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
